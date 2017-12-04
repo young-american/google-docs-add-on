@@ -168,9 +168,19 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 	const imageUrlMapper = imageUploadLinker( upload, imageCache )
 	const renderContainer = DocService( DocumentApp, imageUrlMapper )
 	const content = renderContainer( doc.getBody() )
-	const postParams = { title, content, categories, tags, type }
+	const author = getAuthorIDFromContent(content);
+	const postParams = { title, content, categories, tags, type, author }
 	const response = wpClient.postToWordPress( site, postId, postParams )
 	return store.savePostToSite( response, site )
+}
+
+function getAuthorIDFromContent(content) {
+	const tcIdLabel = 'TCID: ';
+	if (content.indexOf(tcIdLabel) === -1) {
+		return null;
+	}
+	const idStartPos = content.indexOf(tcIdLabel) + tcIdLabel.length;
+	const id = content.substring(idStartPos, idStartPos+7)
 }
 
 function postOnServerIsNewer( site, cachedPost ) {
