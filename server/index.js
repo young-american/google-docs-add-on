@@ -173,9 +173,12 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 	const renderContainer = DocService( DocumentApp, imageUrlMapper )
 	const content = renderContainer( doc.getBody() )
 	const author = getAuthorIDFromContent(content);
-	const postParams = { title, content, categories, tags, type, terms: {
-		author: [author]
-	} }
+	const postParams = { title, content, categories, tags, type }
+	if (author) {
+		postParams.terms = {
+			author: [author]
+		}
+	}
 	const response = wpClient.postToWordPress( site, postId, postParams )
 	return store.savePostToSite( response, site )
 }
