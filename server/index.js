@@ -117,7 +117,11 @@ export function authCallback( request ) {
 	}
 
 	if ( isAuthorized ) {
-		let site = oauthClient().getToken_()
+		/**
+		* This method oauthClient().getToken() was changed from oauthClient.getToken_().
+		* TODO: Submit PR into official plugin?  Is getToken_() actually deprecated/we're not just misunderstanding something here?
+		*/
+		let site = oauthClient().getToken()
 		try {
 			site = updateSiteInfo( site )
 		} catch ( e ) {
@@ -169,7 +173,9 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 	const renderContainer = DocService( DocumentApp, imageUrlMapper )
 	const content = renderContainer( doc.getBody() )
 	const author = getAuthorIDFromContent(content);
-	const postParams = { title, content, categories, tags, type, author }
+	const postParams = { title, content, categories, tags, type, terms: {
+		author: [author]
+	} }
 	const response = wpClient.postToWordPress( site, postId, postParams )
 	return store.savePostToSite( response, site )
 }
@@ -180,7 +186,7 @@ function getAuthorIDFromContent(content) {
 		return null;
 	}
 	const idStartPos = content.indexOf(tcIdLabel) + tcIdLabel.length;
-	const id = content.substring(idStartPos, idStartPos+7)
+	const id = content.substring(idStartPos, content.length) // We go to the end of doc, because TCID:example-slug is always the last text in the doc
 }
 
 function postOnServerIsNewer( site, cachedPost ) {
