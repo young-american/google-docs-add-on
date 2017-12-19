@@ -1,5 +1,5 @@
 /* global React */
-import { loadSites, getAuthUrl, deleteSite, refreshSite } from './services';
+import { loadSites, getAuthUrl, deleteSite, refreshSite, findImagesFromUnsplash } from './services';
 import Site from './site.jsx';
 import ErrorMessage from './error-message.jsx'
 
@@ -9,6 +9,8 @@ export default class App extends React.Component {
 		this.state = {
 			sitesLoaded: false,
 			sites: [],
+			images: [],
+			selectedImageUrl: null,
 			error: null,
 			authorizationUrl: null
 		};
@@ -16,16 +18,32 @@ export default class App extends React.Component {
 		this.updateSiteList = this.updateSiteList.bind( this )
 		this.errorHandler = this.errorHandler.bind( this )
 		this.clearError = this.clearError.bind( this )
+		this.findImagesFromUnsplash = this.findImagesFromUnsplash.bind( this )
 	}
 
 	componentDidMount() {
 		this.updateSiteList()
+		this.findImagesFromUnsplash()
 		this.updateAuthUrl()
 		this.authTimer = setInterval( () => this.updateAuthUrl(), 1000 * 60 * 3 )
 	}
 
 	componentWillUnmount() {
 		clearInterval( this.authTimer )
+	}
+
+	findImagesFromUnsplash() {
+		findImagesFromUnsplash()
+			.then((images) => {
+				const imageResults = images.results.map((image) => {
+					return {
+						url: image.urls.regular,
+						title: image.description
+					}
+				})
+				this.setState({ images: imageResults })
+			})
+			.catch((err) => this.setState({ error: err }))
 	}
 
 	updateSiteList() {
@@ -80,6 +98,7 @@ export default class App extends React.Component {
 	}
 
 	render() {
+		console.log(this.state);
 		const hasSites = this.state.sitesLoaded && ( this.state.sites.length > 0 )
 		const headerCopy = hasSites
 			? 'Pick a site to copy this document to below. It will be saved on your site as a draft.'
@@ -106,9 +125,23 @@ export default class App extends React.Component {
 							setPost={ this.setPost.bind( this, site.blog_id ) }
 							removeSite={ this.removeSite.bind( this, site.blog_id ) }
 							refreshSite={ this.updateSite.bind( this, site.blog_id ) }
+							selectedImageUrl={ this.state.selectedImageUrl }
 							updateSiteList={ this.updateSiteList } /> ) }
 					<li className="sites-list__add-site"><a className="button button-secondary" href={ this.state.authorizationUrl } target="_blank">Add WordPress Site</a></li>
 				</ul>
+			</div>
+
+			<div className="images-list">
+					{this.state.images.map(image =>
+						<img
+							src={image.url}
+							style={{marginRight:5, width: 65}}
+							onClick={() => {
+								this.setState({
+									selectedImageUrl: image.url,
+								})
+							}} />
+					)}
 			</div>
 
 			<ErrorMessage msg={ this.state.error } clearError={ this.clearError } />

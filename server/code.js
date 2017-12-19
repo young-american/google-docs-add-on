@@ -14,7 +14,9 @@ import {
 	clearSiteData,
 	refreshSite,
 	include,
-	getAuthUrl
+	getAuthUrl,
+	findImagesFromUnsplash,
+	uploadWordpressMediaFromUrl,
 } from './index'
 
 global.onOpen = onOpen;
@@ -29,3 +31,5 @@ global.refreshSite = refreshSite;
 global.clearSiteData = clearSiteData;
 global.include = include;
 global.getAuthUrl = getAuthUrl;
+global.findImagesFromUnsplash = findImagesFromUnsplash;
+global.uploadWordpressMediaFromUrl = uploadWordpressMediaFromUrl;

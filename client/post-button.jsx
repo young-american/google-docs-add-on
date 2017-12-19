@@ -1,5 +1,5 @@
 /* global React, window */
-import { postToWordPress } from './services';
+import { postToWordPress, uploadWordpressMediaFromUrl } from './services';
 
 const TIMEOUT_MS = 60000
 
@@ -21,19 +21,30 @@ export default class PostButton extends React.Component {
 
 	savePost() {
 		this.setState( { disabled: true } )
-		withTimeout( postToWordPress( this.props.site.blog_id, {
-			categories: this.props.postCategories,
-			tags: this.props.postTags,
-			type: this.props.postType
-		} ) )
-			.then( ( post ) => {
-				this.setState( { disabled: false } )
-				this.props.onPostSave( post )
-			} )
-			.catch( ( e ) => {
-				this.props.errorHandler( e )
-				this.setState( { disabled: false } )
-			} )
+		withTimeout(
+
+			uploadWordpressMediaFromUrl(this.props.site.blog_id, this.props.selectedImageUrl)
+				.then((result) => {
+					console.log('Uploaded new media to wordpress', result);
+				})
+				.catch((err) => {
+					console.log('Error uploading new media to wordpress', err);
+				})
+
+			// postToWordPress( this.props.site.blog_id, {
+			// 	categories: this.props.postCategories,
+			// 	tags: this.props.postTags,
+			// 	type: this.props.postType
+			// }))
+			// 	.then( ( post ) => {
+			// 		this.setState( { disabled: false } )
+			// 		this.props.onPostSave( post )
+			// 	} )
+			// 	.catch( ( e ) => {
+			// 		this.props.errorHandler( e )
+			// 		this.setState( { disabled: false } )
+			// 	}
+		) // close withTimeout
 	}
 
 	render() {

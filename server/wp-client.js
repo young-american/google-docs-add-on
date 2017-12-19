@@ -3,6 +3,7 @@
 const API_BASE = 'https://public-api.wordpress.com/rest/v1.1'
 const CRLF = '\r\n'
 const DEFAULT_FILENAME = 'image'
+const ACCESS_TOKEN = '4g1#5WJp2w5fC#4!O!4Y1dyfCO3eC0qjUNvz$Ee4Jwl^NeTHkQA(xg(HhwCq@M(r';
 
 const contentTypeToExtension = {
 	'image/png': 'png',
@@ -134,6 +135,43 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 		return request( access_token, path, options )
 	}
 
+	function uploadWordpressMediaFromUrl(site, imageUrl) {
+		const { blog_id, access_token } = site;
+		const imageBlob = UrlFetchApp.fetch(
+			imageUrl,
+			{
+				method: 'get'
+			}
+		).getBlob();
+
+		if ( ! imageBlob.getName() && image.getAltDescription ) {
+			// WP needs a valid file extension
+			let extension = '';
+			if ( ! hasImageFileExtension( image.getAltDescription() ) ) {
+				const mimeType = imageBlob.getContentType();
+				extension = ( contentTypeToExtension[ mimeType ] )
+					? '.' + contentTypeToExtension[ mimeType ]
+					: '';
+			}
+			imageBlob.setName( image.getAltDescription() + extension )
+		}
+		const boundary = '-----CUTHEREelH7faHNSXWNi72OTh08zH29D28Zhr3Rif3oupOaDrj'
+
+		const options = {
+			method: 'post',
+			muteHttpExceptions: true,
+			headers: {
+				authorization: `Bearer ${ACCESS_TOKEN}`,
+			},
+			payload: { 'media[0]': imageBlob }
+		};
+		Logger.log(options)
+		return JSON.parse(UrlFetchApp.fetch(
+			`https://public-api.wordpress.com/rest/v1.1/sites/${blog_id}/media/new/`,
+			options
+		))
+	}
+
 	function getSiteInfo( site ) {
 		const { blog_id, access_token } = site
 		return get( access_token, `/sites/${ blog_id }` )
@@ -154,7 +192,10 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 	function getTaxonomiesForPostType( site, postType ) {
 		const { blog_id, access_token } = site
 		const { name } = postType
-		const response = get( access_token, `/sites/${ blog_id }/post-types/${ name }/taxonomies` )
+		/**
+		* TODO: Remove this token.  Absolutely can not go to prod!
+		*/
+		const response = get( ACCESS_TOKEN, `/sites/${ blog_id }/post-types/${ name }/taxonomies` )
 		return response.taxonomies || []
 	}
 
@@ -162,9 +203,10 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 		postToWordPress,
 		getSiteInfo,
 		uploadImage,
+		uploadWordpressMediaFromUrl,
 		getPostStatus,
 		getPostTypes,
 		getCategories,
-		getTaxonomiesForPostType
+		getTaxonomiesForPostType,
 	}
 }

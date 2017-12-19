@@ -17,8 +17,10 @@ import { imageUploadLinker } from './image-upload-linker';
 import { ImageCache } from './image-cache';
 import { Persistance } from './persistance';
 import { getDateFromIso } from './date-utils';
+import { UnsplashClient } from './unsplash-client';
 
 const wpClient = WPClient( PropertiesService, UrlFetchApp )
+const unsplashClient = UnsplashClient();
 const store = Persistance( PropertiesService )
 
 /**
@@ -161,7 +163,9 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 			return cachedPost;
 		}
 	} else {
-		const postParams = { title, categories, tags, type, status: 'draft' }
+		const author = getAuthorIDFromContent(doc.getBody().getText());
+		doc.getBody().replaceText(`TCID: ${author}`, '');
+		const postParams = { title, categories, tags, type, status: 'draft', terms: { author: [author] } }
 		const response = wpClient.postToWordPress( site, 'new', postParams );
 		store.savePostToSite( response, site )
 		postId = response.ID;
@@ -172,15 +176,15 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 	const imageUrlMapper = imageUploadLinker( upload, imageCache )
 	const renderContainer = DocService( DocumentApp, imageUrlMapper )
 	const content = renderContainer( doc.getBody() )
-	const author = getAuthorIDFromContent(content);
 	const postParams = { title, content, categories, tags, type }
-	if (author) {
-		postParams.terms = {
-			author: [author]
-		}
-	}
+	Logger.log(doc.getBody().getText())
 	const response = wpClient.postToWordPress( site, postId, postParams )
 	return store.savePostToSite( response, site )
+}
+
+export function uploadWordpressMediaFromUrl(site_id, imageUrl) {
+	const site = store.findSite( site_id );
+	return wpClient.uploadWordpressMediaFromUrl(site, imageUrl);
 }
 
 function getAuthorIDFromContent(content) {
@@ -190,6 +194,7 @@ function getAuthorIDFromContent(content) {
 	}
 	const idStartPos = content.indexOf(tcIdLabel) + tcIdLabel.length;
 	const id = content.substring(idStartPos, content.length) // We go to the end of doc, because TCID:example-slug is always the last text in the doc
+	return id;
 }
 
 function postOnServerIsNewer( site, cachedPost ) {
@@ -279,6 +284,15 @@ export function clearSiteData() {
 	}
 
 	showSidebar();
+}
+
+export function findImagesFromUnsplash() {
+	console.log('Finding images prior to calling unsplash client')
+	// Get common/important/related words from doc
+	// const documentText = doc.getBody().getText();
+
+	// Search images in unsplash related to this word
+	return unsplashClient.findImages('dog')
 }
 
 let oauthService = undefined;

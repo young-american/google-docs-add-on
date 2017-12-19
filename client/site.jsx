@@ -110,7 +110,14 @@ export default class Site extends React.Component {
 					<a className="sites-list__title" href={ site.blog_url }>{ site.info.name }<br />
 					<em>{ site.blog_url }</em></a>
 				</div>
-				<PostButton site={ site } onPostSave={ this.props.setPost } postTags={ this.state.postTags} postCategories={ this.state.postCategories } postType={ this.state.postType } errorHandler={ this.props.errorHandler } />
+				<PostButton
+					site={ site }
+					onPostSave={ this.props.setPost }
+					postTags={ this.state.postTags}
+					postCategories={ this.state.postCategories }
+					postType={ this.state.postType }
+					errorHandler={ this.props.errorHandler }
+					selectedImageUrl={ this.props.selectedImageUrl } />
 				<a className={ extendedToggled } onClick={ this.toggleOptions }><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Dropdown</title><rect x="0" fill="none" width="24" height="24"/><g><path d="M7 10l5 5 5-5"/></g></svg></a>
 			</div>
 			<div className="sites-list__preview">
