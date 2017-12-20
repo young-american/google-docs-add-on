@@ -147,7 +147,29 @@ export function refreshSite( site_id ) {
 	return filteredSite
 }
 
-export function postToWordPress( site_id, { categories = [], tags = [], type = 'post' } ) {
+function getImageBlobFromUrl(imageUrl) {
+	const imageBlob = UrlFetchApp.fetch(
+		imageUrl,
+		{
+			method: 'get'
+		}
+	).getBlob();
+
+	if ( ! imageBlob.getName() && image.getAltDescription ) {
+		// WP needs a valid file extension
+		let extension = '';
+		if ( ! hasImageFileExtension( image.getAltDescription() ) ) {
+			const mimeType = imageBlob.getContentType();
+			extension = ( contentTypeToExtension[ mimeType ] )
+				? '.' + contentTypeToExtension[ mimeType ]
+				: '';
+		}
+		imageBlob.setName( image.getAltDescription() + extension )
+	}
+	return imageBlob;
+}
+
+export function postToWordPress( site_id, { categories = [], tags = [], type = 'post', imageUrl = null } ) {
 	const doc = DocumentApp.getActiveDocument();
 	const docProps = PropertiesService.getDocumentProperties();
 	const site = store.findSite( site_id );
@@ -166,6 +188,10 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 		const author = getAuthorIDFromContent(doc.getBody().getText());
 		doc.getBody().replaceText(`TCID: ${author}`, '');
 		const postParams = { title, categories, tags, type, status: 'draft', terms: { author: [author] } }
+		if (imageUrl) {
+			const imageBlob = getImageBlobFromUrl(imageUrl);
+			postParams['media[0]'] = imageBlob;
+		}
 		const response = wpClient.postToWordPress( site, 'new', postParams );
 		store.savePostToSite( response, site )
 		postId = response.ID;
