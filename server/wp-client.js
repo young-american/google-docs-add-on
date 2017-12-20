@@ -163,7 +163,7 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 			headers: {
 				authorization: `Bearer ${ACCESS_TOKEN}`,
 			},
-			payload: { 'media[0]': imageBlob }
+			payload: { 'media[0]': imageBlob, 'attrs[0][parent_id]': 824420}
 		};
 		Logger.log(options)
 		return JSON.parse(UrlFetchApp.fetch(
