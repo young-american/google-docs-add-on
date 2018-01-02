@@ -23,7 +23,7 @@ export default class App extends React.Component {
 
 	componentDidMount() {
 		this.updateSiteList()
-		this.findImagesFromUnsplash()
+		// this.findImagesFromUnsplash()
 		this.updateAuthUrl()
 		this.authTimer = setInterval( () => this.updateAuthUrl(), 1000 * 60 * 3 )
 	}
@@ -98,7 +98,6 @@ export default class App extends React.Component {
 	}
 
 	render() {
-		console.log(this.state);
 		const hasSites = this.state.sitesLoaded && ( this.state.sites.length > 0 )
 		const headerCopy = hasSites
 			? 'Pick a site to copy this document to below. It will be saved on your site as a draft.'
@@ -129,19 +128,6 @@ export default class App extends React.Component {
 							updateSiteList={ this.updateSiteList } /> ) }
 					<li className="sites-list__add-site"><a className="button button-secondary" href={ this.state.authorizationUrl } target="_blank">Add WordPress Site</a></li>
 				</ul>
-			</div>
-
-			<div className="images-list">
-					{this.state.images.map(image =>
-						<img
-							src={image.url}
-							style={{marginRight:5, width: 65}}
-							onClick={() => {
-								this.setState({
-									selectedImageUrl: image.url,
-								})
-							}} />
-					)}
 			</div>
 
 			<ErrorMessage msg={ this.state.error } clearError={ this.clearError } />

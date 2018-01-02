@@ -164,22 +164,22 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 		}
 	} else {
 		const author = getAuthorIDFromContent(doc.getBody().getText());
-		doc.getBody().replaceText(`TCID: ${author}`, '');
-		const postParams = { title, categories, tags, type, status: 'draft', terms: { author: [author] } }
-		const response = wpClient.postToWordPress( site, 'new', postParams );
-		store.savePostToSite( response, site )
-		postId = response.ID;
+		doc.getBody().replaceText(`TCID: ${author}*`, '');
+
+		// const postParams = { title, categories, tags, type, status: 'draft', terms: { author: [author] } }
+		// const response = wpClient.postToWordPress( site, 'new', postParams );
+		// store.savePostToSite( response, site )
+		// postId = response.ID;
 	}
 
-	const upload = image => wpClient.uploadImage( site, image, postId )
-	const imageCache = ImageCache( site, docProps, md5 )
-	const imageUrlMapper = imageUploadLinker( upload, imageCache )
-	const renderContainer = DocService( DocumentApp, imageUrlMapper )
-	const content = renderContainer( doc.getBody() )
-	const postParams = { title, content, categories, tags, type }
-	Logger.log(doc.getBody().getText())
-	const response = wpClient.postToWordPress( site, postId, postParams )
-	return store.savePostToSite( response, site )
+	// const upload = image => wpClient.uploadImage( site, image, postId )
+	// const imageCache = ImageCache( site, docProps, md5 )
+	// const imageUrlMapper = imageUploadLinker( upload, imageCache )
+	// const renderContainer = DocService( DocumentApp, imageUrlMapper )
+	// const content = renderContainer( doc.getBody() )
+	// const postParams = { title, content, categories, tags, type }
+	// const response = wpClient.postToWordPress( site, postId, postParams )
+	// return store.savePostToSite( response, site )
 }
 
 export function uploadWordpressMediaFromUrl(site_id, imageUrl) {
