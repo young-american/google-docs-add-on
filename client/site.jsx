@@ -117,6 +117,9 @@ export default class Site extends React.Component {
 					postCategories={ this.state.postCategories }
 					postType={ this.state.postType }
 					errorHandler={ this.props.errorHandler }
+					selectedPhotographerUrl={ this.state.selectedPhotographerUrl }
+					selectedPhotographerName={ this.state.selectedPhotographerName }
+					selectedPhotoDescription={ this.state.selectedPhotoDescription }
 					selectedImageUrl={ this.props.selectedImageUrl } />
 				<a className={ extendedToggled } onClick={ this.toggleOptions }><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Dropdown</title><rect x="0" fill="none" width="24" height="24"/><g><path d="M7 10l5 5 5-5"/></g></svg></a>
 			</div>

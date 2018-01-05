@@ -186,6 +186,8 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 			},
 			payload: {
 			   "ID":postId,
+				 "date": post.date,
+				 "modified": post.modified,
 			   "content":`[caption id=\"attachment_${attachmentId}\" align=\"alignnone\" width=\"${imageData.width}\"]<img class=\"wp-image-${attachmentId} size-full_bleed\" src=\"
 				 ${imageData.URL}?w=${imageData.width}\" alt=\"${photoDescription}\" width=\"${imageData.width}\" height=\"${imageData.height}\" /> <a href=\"${photographerUrl}\">${photographerName}</a>[/caption]${post.content}`,
 			   "status":"draft",
