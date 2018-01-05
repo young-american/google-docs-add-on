@@ -16,6 +16,7 @@ export default class App extends React.Component {
 			selectedImageUrl: '',
 			selectedPhotographerUrl: '',
 			selectedPhotographerName: '',
+			selectedPhotoDescription: '',
 			error: null,
 			authorizationUrl: null
 		};
@@ -58,7 +59,7 @@ export default class App extends React.Component {
 	}
 
 	resetImageSearch() {
-		this.setState({ imagesLoading: false, selectedImageUrl: '', selectedPhotographerUrl: '', selectedPhotographerName: '' })
+		this.setState({ imagesLoading: false, selectedImageUrl: '', selectedPhotographerUrl: '', selectedPhotographerName: '', selectedPhotoDescription: '' })
 	}
 
 	findImagesFromUnsplash(searchTerm, page = 1) {
@@ -67,6 +68,7 @@ export default class App extends React.Component {
 			selectedImageUrl: '',
 			selectedPhotographerUrl: '',
 			selectedPhotographerName: '',
+			selectedPhotoDescription: '',
 		});
 		findImagesFromUnsplash(searchTerm, page)
 			.then((images) => {
@@ -75,7 +77,8 @@ export default class App extends React.Component {
 						url: image.urls.regular,
 						title: image.description,
 						photographerName: image.user.name,
-						photographerUrl: image.user.links.html
+						photographerUrl: image.user.links.html,
+						description: image.description
 					}
 				})
 				if (page === 1) {
@@ -169,6 +172,9 @@ export default class App extends React.Component {
 							removeSite={ this.removeSite.bind( this, site.blog_id ) }
 							refreshSite={ this.updateSite.bind( this, site.blog_id ) }
 							selectedImageUrl={ this.state.selectedImageUrl }
+							selectedPhotographerUrl={ this.state.selectedPhotographerUrl }
+							selectedPhotographerName={ this.state.selectedPhotographerName }
+							selectedPhotoDescription={ this.state.selectedPhotoDescription }
 							updateSiteList={ this.updateSiteList } /> ) }
 					<li className="sites-list__add-site"><a className="button button-secondary" href={ this.state.authorizationUrl } target="_blank">Add WordPress Site</a></li>
 				</ul>
@@ -207,7 +213,8 @@ export default class App extends React.Component {
 							this.setState({
 								selectedImageUrl: image.url,
 								selectedPhotographerName: image.photographerName,
-								selectedPhotographerUrl: image.photographerUrl
+								selectedPhotographerUrl: image.photographerUrl,
+								selectedPhotoDescription: image.description
 							})
 						}} />
 				)}

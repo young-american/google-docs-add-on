@@ -300,9 +300,9 @@ export function attachImageToPost(site_id, postId, imageJson) {
 	wpClient.attachImageToPost(site, postId, imageJson);
 }
 
-export function prependFeaturedImageToPostContent(site_id, postId, imageJson) {
+export function prependFeaturedImageToPostContent(site_id, postId, imageJson, photographerName, photographerUrl, photoDescription) {
 	const site = store.findSite( site_id );
-	wpClient.prependFeaturedImageToPostContent(site, postId, imageJson);
+	wpClient.prependFeaturedImageToPostContent(site, postId, imageJson, photographerName, photographerUrl, photoDescription);
 }
 
 let oauthService = undefined;

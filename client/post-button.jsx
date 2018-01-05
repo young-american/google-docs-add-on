@@ -38,7 +38,14 @@ export default class PostButton extends React.Component {
 							attachImageToPost(this.props.site.blog_id, post.ID, mediaData)
 							.then((result) => {
 								console.log('Image was attached', post.ID, mediaData, result)
-								prependFeaturedImageToPostContent(this.props.site.blog_id, post.ID, mediaData);
+								prependFeaturedImageToPostContent
+									this.props.site.blog_id,
+									post.ID,
+									mediaData,
+									this.props.selectedPhotographerName,
+									this.props.selectedPhotographerUrl,
+									this.props.selectedPhotoDescription
+								);
 							});
 						} )
 						.catch( ( e ) => {

@@ -5,12 +5,12 @@ if ( ! window.Promise ) {
 	window.Promise = Promise;
 }
 
-export function prependFeaturedImageToPostContent(blogId, postId, imageJson) {
+export function prependFeaturedImageToPostContent(blogId, postId, imageJson, photographerName, photographerUrl, photoDescription) {
 	return new Promise( ( resolve, reject ) => {
 		google.script.run
 			.withSuccessHandler( resolve )
 			.withFailureHandler( reject )
-			.prependFeaturedImageToPostContent(blogId, postId, imageJson);
+			.prependFeaturedImageToPostContent(blogId, postId, imageJson, photographerName, photographerUrl, photoDescription);
 	} )
 }
 

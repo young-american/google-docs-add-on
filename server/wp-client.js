@@ -171,16 +171,13 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 		return JSON.parse(response);
 	}
 
-	function prependFeaturedImageToPostContent(site, postId, imageData) {
+	function prependFeaturedImageToPostContent(site, postId, imageData, photographerName, photographerUrl, photoDescription) {
 		Logger.log('Prepending')
 		// Logger.log(postId)
 		const { blog_id, access_token } = site;
 		const post = getPostStatus(site, postId);
 		Logger.log(post)
 		const attachmentId = Object.keys(post.attachments)[0];
-
-		Logger.log(attachmentId)
-
 		const options = {
 			method: 'post',
 			muteHttpExceptions: true,
@@ -190,8 +187,7 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 			payload: {
 			   "ID":postId,
 			   "content":`[caption id=\"attachment_${attachmentId}\" align=\"alignnone\" width=\"${imageData.width}\"]<img class=\"wp-image-${attachmentId} size-full_bleed\" src=\"
-				 ${imageData.URL}?w=${imageData.width}\" alt=\"picture of hand using ipad\" width=\"${imageData.width}\" height=\"${imageData.height}\" /> <a href=\"https://unsplash.com/photos/iFSvn82XfGo\">Taras Shypka</a>[/caption]<p>send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. </p> </p> <p>More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. </p> </p></p> ",
-			   "excerpt":"<p>send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC.</p>`,
+				 ${imageData.URL}?w=${imageData.width}\" alt=\"${photoDescription}\" width=\"${imageData.width}\" height=\"${imageData.height}\" /> <a href=\"${photographerUrl}\">${photographerName}</a>[/caption]${post.content}`,
 			   "status":"draft",
 			   "type":"post"
 			}
