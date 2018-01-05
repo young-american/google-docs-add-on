@@ -96,9 +96,63 @@ svg {
 	overflow: auto;
 }
 
+.images-search-wrapper {
+	padding: 15px 15px 8px 15px;
+	float: left;
+	width: 100%;
+}
+
+.images-search-input {
+	width: 72%;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 3px;
+	float: left;
+	margin-bottom: 8px;
+}
+
+.image-search-button {
+	width: 25%;
+  margin-left: 3%;
+  display: inline-block;
+  padding: 10px;
+  background: #0087be;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #fff;
+  text-align: center;
+	cursor: pointer;
+	transition: .2s all;
+}
+
+.images-load-more-button {
+	float: left;
+	width: 100%;
+	padding: 15px;
+	border: 1px solid #ccc;
+	margin-bottom: 15px;
+	border-radius: 3px;
+	color: #bbb;
+	cursor: pointer;
+	text-align: center;
+	transition: .2s all;
+}
+
+.images-load-more-button:hover {
+	border-color: #aaa;
+}
+
+.image-search-button:hover {
+	background: #0674a0;
+}
+
 .images-list {
 	height: 200px;
 	overflow-y: scroll;
+	padding: 15px;
+	border-top: 1px solid #bbb;
+	float: left;
+	width: 100%;
 }
 
 .sites-list>ul {

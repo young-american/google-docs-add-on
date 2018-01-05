@@ -5,12 +5,12 @@ if ( ! window.Promise ) {
 	window.Promise = Promise;
 }
 
-export function findImagesFromUnsplash() {
+export function findImagesFromUnsplash(searchTerm, page) {
 	return new Promise( ( resolve, reject ) => {
 		google.script.run
 			.withSuccessHandler( resolve )
 			.withFailureHandler( reject )
-			.findImagesFromUnsplash();
+			.findImagesFromUnsplash(searchTerm, page);
 	} )
 }
 

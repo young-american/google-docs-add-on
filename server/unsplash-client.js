@@ -6,8 +6,8 @@ export function UnsplashClient() {
     return JSON.parse(UrlFetchApp.fetch( url, options ))
   }
 
-  function findImages(query) {
-    const url = `https://api.unsplash.com/search/photos/?query=${query}&client_id=${UNSPLASH_CLIENT_ID}`;
+  function findImages(query, page = 1) {
+    const url = `https://api.unsplash.com/search/photos/?query=${query}&page=${page}&per_page=50&client_id=${UNSPLASH_CLIENT_ID}`;
     return request(url, {});
   }
 

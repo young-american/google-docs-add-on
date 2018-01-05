@@ -286,13 +286,13 @@ export function clearSiteData() {
 	showSidebar();
 }
 
-export function findImagesFromUnsplash() {
+export function findImagesFromUnsplash(searchTerm, page) {
 	console.log('Finding images prior to calling unsplash client')
 	// Get common/important/related words from doc
 	// const documentText = doc.getBody().getText();
 
 	// Search images in unsplash related to this word
-	return unsplashClient.findImages('dog')
+	return unsplashClient.findImages(searchTerm, page)
 }
 
 let oauthService = undefined;

@@ -25,22 +25,20 @@ export default class PostButton extends React.Component {
 
 			uploadWordpressMediaFromUrl(this.props.site.blog_id, this.props.selectedImageUrl)
 				.then((result) => {
-					console.log('Uploaded new media to wordpress', result);
-					// postToWordPress(this.props.site.blog_id, {
-					// 	categories: this.props.postCategories,
-					// 	tags: this.props.postTags,
-					// 	type: this.props.postType,
-					// 	featured_image: result.media[0].ID
-					// })
-					// 	.then( ( post ) => {
-					// 		console.log('POST CREATED', post)
-					// 		this.setState( { disabled: false } )
-					// 		this.props.onPostSave( post  )
-					// 	} )
-					// 	.catch( ( e ) => {
-					// 		this.props.errorHandler( e )
-					// 		this.setState( { disabled: false } )
-					// 	})
+					postToWordPress(this.props.site.blog_id, {
+						categories: this.props.postCategories,
+						tags: this.props.postTags,
+						type: this.props.postType,
+						featured_image: result.media[0].ID
+					})
+						.then( ( post ) => {
+							this.setState( { disabled: false } )
+							this.props.onPostSave( post  )
+						} )
+						.catch( ( e ) => {
+							this.props.errorHandler( e )
+							this.setState( { disabled: false } )
+						})
 				})
 				.catch((err) => {
 					console.log('Error uploading new media to wordpress', err);

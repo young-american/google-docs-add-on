@@ -10,7 +10,10 @@ export default class App extends React.Component {
 			sitesLoaded: false,
 			sites: [],
 			images: [],
-			selectedImageUrl: null,
+			loadedImagePages: [],
+			currentImagePage: 1,
+			imagesLoading: false,
+			selectedImageUrl: '',
 			error: null,
 			authorizationUrl: null
 		};
@@ -19,11 +22,13 @@ export default class App extends React.Component {
 		this.errorHandler = this.errorHandler.bind( this )
 		this.clearError = this.clearError.bind( this )
 		this.findImagesFromUnsplash = this.findImagesFromUnsplash.bind( this )
+		this.searchUnsplash = this.searchUnsplash.bind( this );
+		this.resetImageSearch = this.resetImageSearch.bind( this );
+		this.loadNextImagePage = this.loadNextImagePage.bind( this );
 	}
 
 	componentDidMount() {
 		this.updateSiteList()
-		this.findImagesFromUnsplash()
 		this.updateAuthUrl()
 		this.authTimer = setInterval( () => this.updateAuthUrl(), 1000 * 60 * 3 )
 	}
@@ -32,8 +37,34 @@ export default class App extends React.Component {
 		clearInterval( this.authTimer )
 	}
 
-	findImagesFromUnsplash() {
-		findImagesFromUnsplash()
+	searchUnsplash() {
+		if (this.refs.imageSearchInput.value.length < 3) {
+			return;
+		}
+		this.setState({ loadedImagePages: [1] });
+		this.findImagesFromUnsplash(this.refs.imageSearchInput.value, 1);
+	}
+
+	loadNextImagePage() {
+		this.state.currentImagePage = this.state.currentImagePage + 1;
+		this.state.loadedImagePages.push(this.state.currentImagePage);
+		this.findImagesFromUnsplash(this.refs.imageSearchInput.value, this.state.currentImagePage)
+		this.setState({
+			currentImagePage: this.state.currentImagePage,
+			loadedImagePages: this.state.loadedImagePages
+		})
+	}
+
+	resetImageSearch() {
+		this.setState({ imagesLoading: false, selectedImageUrl: '' })
+	}
+
+	findImagesFromUnsplash(searchTerm, page = 1) {
+		this.setState({
+			imagesLoading: true,
+			selectedImageUrl: '',
+		});
+		findImagesFromUnsplash(searchTerm, page)
 			.then((images) => {
 				const imageResults = images.results.map((image) => {
 					return {
@@ -41,7 +72,14 @@ export default class App extends React.Component {
 						title: image.description
 					}
 				})
-				this.setState({ images: imageResults })
+				if (page === 1) {
+					// otherwise replace all images with the first page of new results
+					this.state.images = imageResults;
+				} else {
+					// if we haven't yet loaded this page of images, add the results into the gallery
+					this.state.images = this.state.images.concat(imageResults);
+				}
+				this.setState({ images: this.state.images, imageCount: images.total, imagesLoading: false })
 			})
 			.catch((err) => this.setState({ error: err }))
 	}
@@ -98,7 +136,6 @@ export default class App extends React.Component {
 	}
 
 	render() {
-		console.log(this.state);
 		const hasSites = this.state.sitesLoaded && ( this.state.sites.length > 0 )
 		const headerCopy = hasSites
 			? 'Pick a site to copy this document to below. It will be saved on your site as a draft.'
@@ -130,18 +167,45 @@ export default class App extends React.Component {
 					<li className="sites-list__add-site"><a className="button button-secondary" href={ this.state.authorizationUrl } target="_blank">Add WordPress Site</a></li>
 				</ul>
 			</div>
-
+			<div className="images-search-wrapper">
+				<input type="text" ref="imageSearchInput" placeholder="Search Unsplash for photos" className="images-search-input" onChange={this.resetImageSearch}/>
+				<div className="image-search-button" onClick={this.searchUnsplash}>Search</div>
+				<div style={{width:'100%', float: 'left'}}>
+					{this.state.selectedImageUrl.length ?
+						<div style={{fontWeight: 'bold', float: 'left'}}>Nice pick!</div> :
+						<div style={{fontWeight: 'bold', float: 'left'}}>Select a featured image</div>
+					}
+					{this.state.images.length ?
+						<div style={{float: 'right'}}>{this.state.imageCount} results</div> :
+						null
+					}
+				</div>
+			</div>
 			<div className="images-list">
-					{this.state.images.map(image =>
-						<img
-							src={image.url}
-							style={{marginRight:5, width: 65}}
-							onClick={() => {
-								this.setState({
-									selectedImageUrl: image.url,
-								})
-							}} />
-					)}
+				{this.state.imagesLoading &&
+					<div style={{textAlign: 'center', fontWeight: 'bold', color: '#bbb', fontSize: 16, padding: 15}}>Searching images...</div>
+				}
+				{!this.state.imagesLoading && this.state.images.map(image =>
+					<img
+						src={image.url}
+						style={{
+							marginRight:5,
+							width: 62,
+							marginBottom: 5,
+							verticalAlign: 'top',
+							cursor: 'pointer',
+							border: this.state.selectedImageUrl === image.url ? '2px solid #000' : 'none',
+							opacity: this.state.selectedImageUrl.length && this.state.selectedImageUrl !== image.url ? .3 : 1
+						}}
+						onClick={() => {
+							this.setState({
+								selectedImageUrl: image.url,
+							})
+						}} />
+				)}
+				{this.state.images.length > 0 &&
+					<div className="images-load-more-button" onClick={this.loadNextImagePage}>Load more!</div>
+				}
 			</div>
 
 			<ErrorMessage msg={ this.state.error } clearError={ this.clearError } />
