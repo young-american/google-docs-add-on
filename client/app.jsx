@@ -14,6 +14,8 @@ export default class App extends React.Component {
 			currentImagePage: 1,
 			imagesLoading: false,
 			selectedImageUrl: '',
+			selectedPhotographerUrl: '',
+			selectedPhotographerName: '',
 			error: null,
 			authorizationUrl: null
 		};
@@ -56,20 +58,24 @@ export default class App extends React.Component {
 	}
 
 	resetImageSearch() {
-		this.setState({ imagesLoading: false, selectedImageUrl: '' })
+		this.setState({ imagesLoading: false, selectedImageUrl: '', selectedPhotographerUrl: '', selectedPhotographerName: '' })
 	}
 
 	findImagesFromUnsplash(searchTerm, page = 1) {
 		this.setState({
 			imagesLoading: true,
 			selectedImageUrl: '',
+			selectedPhotographerUrl: '',
+			selectedPhotographerName: '',
 		});
 		findImagesFromUnsplash(searchTerm, page)
 			.then((images) => {
 				const imageResults = images.results.map((image) => {
 					return {
 						url: image.urls.regular,
-						title: image.description
+						title: image.description,
+						photographerName: image.user.name,
+						photographerUrl: image.user.links.html
 					}
 				})
 				if (page === 1) {
@@ -190,7 +196,7 @@ export default class App extends React.Component {
 						src={image.url}
 						style={{
 							marginRight:5,
-							width: 62,
+							width: 82,
 							marginBottom: 5,
 							verticalAlign: 'top',
 							cursor: 'pointer',
@@ -200,6 +206,8 @@ export default class App extends React.Component {
 						onClick={() => {
 							this.setState({
 								selectedImageUrl: image.url,
+								selectedPhotographerName: image.photographerName,
+								selectedPhotographerUrl: image.photographerUrl
 							})
 						}} />
 				)}
