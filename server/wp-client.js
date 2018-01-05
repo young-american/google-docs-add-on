@@ -135,6 +135,73 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 		return request( access_token, path, options )
 	}
 
+	function attachImageToPost(site, postId, imageJson) {
+		const { blog_id, access_token } = site;
+		imageJson.parent_id = postId;
+		const options = {
+			method: 'post',
+			muteHttpExceptions: true,
+			headers: {
+				authorization: `Bearer ${ACCESS_TOKEN}`,
+			},
+			payload: imageJson
+		};
+		const response = UrlFetchApp.fetch(
+			`https://public-api.wordpress.com/rest/v1.1/sites/${blog_id}/media/${imageJson.ID}/`,
+			options
+		);
+
+		return JSON.parse(response)
+	}
+
+	function getPost(site, postId) {
+		const { blog_id, access_token } = site;
+
+		const options = {
+			method: 'get',
+			muteHttpExceptions: true,
+			headers: {
+				authorization: `Bearer ${ACCESS_TOKEN}`,
+			}
+		};
+		const response = UrlFetchApp.fetch(
+			`https://public-api.wordpress.com/rest/v1.1/sites/${blog_id}/posts/${postId}/`,
+			options
+		);
+		return JSON.parse(response);
+	}
+
+	function prependFeaturedImageToPostContent(site, postId, imageData) {
+		Logger.log('Prepending')
+		// Logger.log(postId)
+		const { blog_id, access_token } = site;
+		const post = getPostStatus(site, postId);
+		Logger.log(post)
+		const attachmentId = Object.keys(post.attachments)[0];
+
+		Logger.log(attachmentId)
+
+		const options = {
+			method: 'post',
+			muteHttpExceptions: true,
+			headers: {
+				authorization: `Bearer ${ACCESS_TOKEN}`,
+			},
+			payload: {
+			   "ID":postId,
+			   "content":`[caption id=\"attachment_${attachmentId}\" align=\"alignnone\" width=\"${imageData.width}\"]<img class=\"wp-image-${attachmentId} size-full_bleed\" src=\"
+				 ${imageData.URL}?w=${imageData.width}\" alt=\"picture of hand using ipad\" width=\"${imageData.width}\" height=\"${imageData.height}\" /> <a href=\"https://unsplash.com/photos/iFSvn82XfGo\">Taras Shypka</a>[/caption]<p>send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. </p> </p> <p>More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. </p> </p></p> ",
+			   "excerpt":"<p>send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC. More stuff to send to TC.</p>`,
+			   "status":"draft",
+			   "type":"post"
+			}
+		};
+		return JSON.parse(UrlFetchApp.fetch(
+			`https://public-api.wordpress.com/rest/v1.1/sites/${blog_id}/posts/${postId}/`,
+			options
+		))
+	}
+
 	function uploadWordpressMediaFromUrl(site, imageUrl) {
 		const { blog_id, access_token } = site;
 		const imageBlob = UrlFetchApp.fetch(
@@ -208,5 +275,7 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 		getPostTypes,
 		getCategories,
 		getTaxonomiesForPostType,
+		attachImageToPost,
+		prependFeaturedImageToPostContent,
 	}
 }

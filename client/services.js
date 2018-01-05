@@ -5,6 +5,24 @@ if ( ! window.Promise ) {
 	window.Promise = Promise;
 }
 
+export function prependFeaturedImageToPostContent(blogId, postId, imageJson) {
+	return new Promise( ( resolve, reject ) => {
+		google.script.run
+			.withSuccessHandler( resolve )
+			.withFailureHandler( reject )
+			.prependFeaturedImageToPostContent(blogId, postId, imageJson);
+	} )
+}
+
+export function attachImageToPost(blogId, postId, imageJson) {
+	return new Promise( ( resolve, reject ) => {
+		google.script.run
+			.withSuccessHandler( resolve )
+			.withFailureHandler( reject )
+			.attachImageToPost(blogId, postId, imageJson);
+	} )
+}
+
 export function findImagesFromUnsplash(searchTerm, page) {
 	return new Promise( ( resolve, reject ) => {
 		google.script.run

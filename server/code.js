@@ -17,6 +17,8 @@ import {
 	getAuthUrl,
 	findImagesFromUnsplash,
 	uploadWordpressMediaFromUrl,
+	attachImageToPost,
+	prependFeaturedImageToPostContent,
 } from './index'
 
 global.onOpen = onOpen;
@@ -33,3 +35,5 @@ global.include = include;
 global.getAuthUrl = getAuthUrl;
 global.findImagesFromUnsplash = findImagesFromUnsplash;
 global.uploadWordpressMediaFromUrl = uploadWordpressMediaFromUrl;
+global.attachImageToPost = attachImageToPost;
+global.prependFeaturedImageToPostContent = prependFeaturedImageToPostContent;

@@ -1,5 +1,5 @@
 /* global React, window */
-import { postToWordPress, uploadWordpressMediaFromUrl } from './services';
+import { postToWordPress, uploadWordpressMediaFromUrl, attachImageToPost, prependFeaturedImageToPostContent } from './services';
 
 const TIMEOUT_MS = 60000
 
@@ -25,6 +25,7 @@ export default class PostButton extends React.Component {
 
 			uploadWordpressMediaFromUrl(this.props.site.blog_id, this.props.selectedImageUrl)
 				.then((result) => {
+					const mediaData = result.media[0];
 					postToWordPress(this.props.site.blog_id, {
 						categories: this.props.postCategories,
 						tags: this.props.postTags,
@@ -34,6 +35,11 @@ export default class PostButton extends React.Component {
 						.then( ( post ) => {
 							this.setState( { disabled: false } )
 							this.props.onPostSave( post  )
+							attachImageToPost(this.props.site.blog_id, post.ID, mediaData)
+							.then((result) => {
+								console.log('Image was attached', post.ID, mediaData, result)
+								prependFeaturedImageToPostContent(this.props.site.blog_id, post.ID, mediaData);
+							});
 						} )
 						.catch( ( e ) => {
 							this.props.errorHandler( e )

@@ -295,6 +295,16 @@ export function findImagesFromUnsplash(searchTerm, page) {
 	return unsplashClient.findImages(searchTerm, page)
 }
 
+export function attachImageToPost(site_id, postId, imageJson) {
+	const site = store.findSite( site_id );
+	wpClient.attachImageToPost(site, postId, imageJson);
+}
+
+export function prependFeaturedImageToPostContent(site_id, postId, imageJson) {
+	const site = store.findSite( site_id );
+	wpClient.prependFeaturedImageToPostContent(site, postId, imageJson);
+}
+
 let oauthService = undefined;
 // Needs to be lazy-instantiated because we don't have permissions to access
 // properties until the app is actually open
