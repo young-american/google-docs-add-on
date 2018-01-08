@@ -176,7 +176,8 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 		// Logger.log(postId)
 		const { blog_id, access_token } = site;
 		const post = getPostStatus(site, postId);
-		Logger.log(post)
+		Logger.log(post.author.ID);
+		Logger.log(post);
 		const attachmentId = Object.keys(post.attachments)[0];
 		const options = {
 			method: 'post',
@@ -185,19 +186,20 @@ export function WPClient( PropertiesService, UrlFetchApp ) {
 				authorization: `Bearer ${ACCESS_TOKEN}`,
 			},
 			payload: {
-			   "ID":postId,
+				 "author": post.author.ID,
 				 "date": post.date,
 				 "modified": post.modified,
 			   "content":`[caption id=\"attachment_${attachmentId}\" align=\"alignnone\" width=\"${imageData.width}\"]<img class=\"wp-image-${attachmentId} size-full_bleed\" src=\"
-				 ${imageData.URL}?w=${imageData.width}\" alt=\"${photoDescription}\" width=\"${imageData.width}\" height=\"${imageData.height}\" /> <a href=\"${photographerUrl}\">${photographerName}</a>[/caption]${post.content}`,
-			   "status":"draft",
-			   "type":"post"
+				 ${imageData.URL}?w=${imageData.width}\" alt=\"${photoDescription}\" width=\"${imageData.width}\" height=\"${imageData.height}\" /> <a href=\"${photographerUrl}?utm_source=thought_catalog_wordpress_plugin&utm_medium=referral\">${photographerName}</a>[/caption]${post.content}`,
 			}
 		};
-		return JSON.parse(UrlFetchApp.fetch(
+		const response = UrlFetchApp.fetch(
 			`https://public-api.wordpress.com/rest/v1.1/sites/${blog_id}/posts/${postId}/`,
 			options
-		))
+		)
+		Logger.log('Response from prepend')
+		Logger.log(response);
+		return JSON.parse(response)
 	}
 
 	function uploadWordpressMediaFromUrl(site, imageUrl) {
