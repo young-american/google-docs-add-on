@@ -210,7 +210,6 @@ export default class App extends React.Component {
 							opacity: this.state.selectedImageUrl.length && this.state.selectedImageUrl !== image.url ? .3 : 1
 						}}
 						onClick={() => {
-							console.log(image)
 							this.setState({
 								selectedImageUrl: image.url,
 								selectedPhotographerName: image.photographerName,
