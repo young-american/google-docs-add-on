@@ -18,7 +18,8 @@ export default class App extends React.Component {
 			selectedPhotographerName: '',
 			selectedPhotoDescription: '',
 			error: null,
-			authorizationUrl: null
+			authorizationUrl: null,
+			imgPreview: ''
 		};
 		this.updateAuthUrl = this.updateAuthUrl.bind( this )
 		this.updateSiteList = this.updateSiteList.bind( this )
@@ -194,29 +195,48 @@ export default class App extends React.Component {
 				</div>
 			</div>
 			<div className="images-list">
+				{this.state.imgPreview.length > 0 &&
+					<div style={{ position: 'fixed', zIndex: 1, top:0, left:0 }}>
+						<img src={this.state.imgPreview} width="100%" />
+						<div
+							style={{position: 'absolute', top: 10, right: 10, textDecoration: 'underline', cursor:'pointer', color:'#ddd'}}
+							onClick={() => { this.setState({ imgPreview: '' }); }}
+						>
+							Minimize
+						</div>
+					</div>
+				}
 				{this.state.imagesLoading &&
 					<div style={{textAlign: 'center', fontWeight: 'bold', color: '#bbb', fontSize: 16, padding: 15}}>Searching images...</div>
 				}
 				{!this.state.imagesLoading && this.state.images.map(image =>
-					<img
-						src={image.url}
-						style={{
-							marginRight:5,
-							width: 82,
-							marginBottom: 5,
-							verticalAlign: 'top',
-							cursor: 'pointer',
-							border: this.state.selectedImageUrl === image.url ? '2px solid #000' : 'none',
-							opacity: this.state.selectedImageUrl.length && this.state.selectedImageUrl !== image.url ? .3 : 1
-						}}
-						onClick={() => {
-							this.setState({
-								selectedImageUrl: image.url,
-								selectedPhotographerName: image.photographerName,
-								selectedPhotographerUrl: image.photographerUrl,
-								selectedPhotoDescription: image.description
-							})
-						}} />
+					<div style={{position: 'relative', display:'inline-block', width:82}}>
+						<div
+							style={{color:'#fff', position: 'absolute', top: 2, left: 2, fontSize: 10, cursor: 'pointer', textDecoration: 'underline'}}
+							onClick={() => { this.setState({ imgPreview: image.url }) }}
+						>
+							Zoom
+						</div>
+						<img
+							src={image.url}
+							style={{
+								marginRight:5,
+								width: 82,
+								marginBottom: 5,
+								verticalAlign: 'top',
+								cursor: 'pointer',
+								border: this.state.selectedImageUrl === image.url ? '2px solid #000' : 'none',
+								opacity: this.state.selectedImageUrl.length && this.state.selectedImageUrl !== image.url ? .3 : 1
+							}}
+							onClick={() => {
+								this.setState({
+									selectedImageUrl: this.state.selectedImageUrl === image.url ? '' : image.url,
+									selectedPhotographerName: image.photographerName,
+									selectedPhotographerUrl: image.photographerUrl,
+									selectedPhotoDescription: image.description
+								})
+							}} />
+						</div>
 				)}
 				{this.state.images.length > 0 &&
 					<div className="images-load-more-button" onClick={this.loadNextImagePage}>Load more!</div>
