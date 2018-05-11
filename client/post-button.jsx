@@ -22,7 +22,7 @@ export default class PostButton extends React.Component {
 	}
 
 	savePostWithImage() {
-		console.log('Save post with image')
+		console.log('Save post with image');
 		return uploadWordpressMediaFromUrl(this.props.site.blog_id, this.props.selectedImageUrl)
 			.then((result) => {
 				const mediaData = result.media[0];
@@ -30,7 +30,7 @@ export default class PostButton extends React.Component {
 					categories: this.props.postCategories,
 					tags: this.props.postTags,
 					type: this.props.postType,
-					featured_image: result.media[0].ID
+					// featured_image: result.media[0].ID
 				})
 					.then( ( post ) => {
 						this.setState( { disabled: false } )

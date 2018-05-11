@@ -17,7 +17,7 @@ export default class Site extends React.Component {
 		this.state = {
 			optionsExpanded: !! post,
 			siteRefreshing: false,
-			postCategories: ( post && post.categories ) ? post.categories : [],
+			postCategories: ( post && post.categories ) ? post.categories : ["Collective World"],
 			postTags,
 			postTagsStr: postTags.join( ', ' ),
 			postType: ( post && post.type ) ? post.type : defaultPostType

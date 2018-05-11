@@ -165,7 +165,7 @@ export function postToWordPress( site_id, { categories = [], tags = [], type = '
 	} else {
 		const author = getAuthorIDFromContent(doc.getBody().getText());
 		doc.getBody().replaceText(`TCID: ${author}`, '');
-		const postParams = { title, categories, tags, featured_image, type, status: 'draft', terms: { author: [author] } }
+		const postParams = { title, categories, tags, featured_image, type, status: 'draft', terms: { author: [author], "category": "Collective World" } }
 		const response = wpClient.postToWordPress( site, 'new', postParams );
 		store.savePostToSite( response, site )
 		postId = response.ID;
